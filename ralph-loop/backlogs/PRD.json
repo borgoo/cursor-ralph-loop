@@ -1,0 +1,349 @@
+[
+  {
+    "category": "Setup & Data Structure",
+    "description": "Define the Book entity using C23 types",
+    "steps": [
+      "Create a struct 'Book' with: int isbn, char[100] title, char[100] author, char[10] start_date, char[10] end_date, int rating",
+      "ISBN must me 5 digit integer (00000 - 99999) - mandatory",
+      "title and author are mandatory",
+      "start date must be a valid string date in format YYYY-MM-DD or null (empty string)",
+      "end date must be a valid string date in format YYYY-MM-DD or null (empty string)",
+      "Rating must be integer between 0 and 5 - mandatory",
+      "Declare a global array of Book pointers: Book* library[10]",
+      "Initialize all pointers to 'nullptr' (C23 keyword)",
+      "Use 'constexpr' to define MAX_BOOKS 10"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - ISBN",
+    "steps": [
+      "Arrange valid (not null) parameters for a Book struct",
+      "Arrange valid (empty or nullable where possible) parameters for a Book struct",
+      "Arrange some invalid ISBN (null, empty, not digits only, out of range)",
+      "Assert that 'Book' creation with valid ISBN passes",
+      "Assert that 'Book' creation with invalid ISBN but all valid other parameters combinations fails with appropriate error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - Title Field",
+    "steps": [
+      "Arrange valid parameters with title as non-empty string (1-99 chars)",
+      "Arrange parameters with title as exactly 100 characters (max length)",
+      "Arrange invalid parameters with title as empty string",
+      "Arrange invalid parameters with title as null pointer",
+      "Arrange invalid parameters with title exceeding 100 characters",
+      "Assert that Book creation with valid title passes",
+      "Assert that Book creation with empty title fails with 'Title is mandatory' error",
+      "Assert that Book creation with null title fails with 'Title is mandatory' error",
+      "Assert that Book creation with title > 100 chars fails with 'Title too long' error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - Author Field",
+    "steps": [
+      "Arrange valid parameters with author as non-empty string (1-99 chars)",
+      "Arrange parameters with author as exactly 100 characters (max length)",
+      "Arrange invalid parameters with author as empty string",
+      "Arrange invalid parameters with author as null pointer",
+      "Arrange invalid parameters with author exceeding 100 characters",
+      "Assert that Book creation with valid author passes",
+      "Assert that Book creation with empty author fails with 'Author is mandatory' error",
+      "Assert that Book creation with null author fails with 'Author is mandatory' error",
+      "Assert that Book creation with author > 100 chars fails with 'Author too long' error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - Start Date Field",
+    "steps": [
+      "Arrange valid parameters with start_date as empty string (nullable)",
+      "Arrange valid parameters with start_date as valid YYYY-MM-DD string (e.g., '2024-08-15')",
+      "Arrange invalid parameters with start_date as invalid valid date with single digit month/day (e.g., '2024-8-5')",
+      "Arrange invalid parameters with start_date as malformed string (e.g., '2024/08/15')",
+      "Arrange invalid parameters with start_date as invalid date (e.g., '2024-13-01')",
+      "Arrange invalid parameters with start_date as wrong format (e.g., '15-08-2024')",
+      "Arrange invalid parameters with start_date containing non-digits (e.g., '2024-08-AB')",
+      "Arrange invalid parameters with start_date too short/long",
+      "Assert that Book creation with empty start_date passes",
+      "Assert that Book creation with valid YYYY-MM-DD format passes",
+      "Assert that Book creation with valid single-digit month/day fails with 'Invalid start date format' error",
+      "Assert that Book creation with invalid date format fails with 'Invalid start date format' error",
+      "Assert that Book creation with non-existent date fails with 'Invalid start date' error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - End date Field",
+    "steps": [
+      "Arrange valid parameters with end_date as empty string (nullable)",
+      "Arrange valid parameters with end_date as valid YYYY-MM-DD string (e.g., '2024-08-15')",
+      "Arrange invalid parameters with end_date as invalid valid date with single digit month/day (e.g., '2024-8-5')",
+      "Arrange invalid parameters with end_date as malformed string (e.g., '2024/08/15')",
+      "Arrange invalid parameters with end_date as invalid date (e.g., '2024-13-01')",
+      "Arrange invalid parameters with end_date as wrong format (e.g., '15-08-2024')",
+      "Arrange invalid parameters with end_date containing non-digits (e.g., '2024-08-AB')",
+      "Arrange invalid parameters with end_date too short/long",
+      "Assert that Book creation with empty end_date passes",
+      "Assert that Book creation with valid YYYY-MM-DD format passes",
+      "Assert that Book creation with valid single-digit month/day fails with 'Invalid end date format' error",
+      "Assert that Book creation with invalid date format fails with 'Invalid end date format' error",
+      "Assert that Book creation with non-existent date fails with 'Invalid end date' error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - Rating Field",
+    "steps": [
+      "Arrange valid parameters with rating as 0 (unread)",
+      "Arrange valid parameters with rating as 5 (highest)",
+      "Arrange valid parameters with rating as 3 (mid-range)",
+      "Arrange invalid parameters with rating as -1 (below minimum)",
+      "Arrange invalid parameters with rating as 6 (above maximum)",
+      "Arrange invalid parameters with rating as non-integer value (if applicable)",
+      "Assert that Book creation with rating 0 passes",
+      "Assert that Book creation with rating 5 passes",
+      "Assert that Book creation with rating 3 passes",
+      "Assert that Book creation with rating -1 fails with 'Rating must be between 0 and 5' error",
+      "Assert that Book creation with rating 6 fails with 'Rating must be between 0 and 5' error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Book entity - Multiple Field Combinations",
+    "steps": [
+      "Arrange all fields valid (golden path)",
+      "Arrange multiple invalid fields simultaneously",
+      "Arrange edge cases: ISBN=00000, title 100 chars, author 100 chars, valid dates, rating=0",
+      "Arrange edge cases: ISBN=99999, minimal title (1 char), minimal author (1 char), no dates, rating=5",
+      "Test that error messages are specific to the first invalid field (or all invalid fields)",
+      "Test that a Book with all mandatory fields valid but optional fields empty can be created",
+      "Assert that golden path creates Book successfully",
+      "Assert that multiple invalid fields results in appropriate error(s)",
+      "Assert that edge case values are handled correctly",
+      "Assert that Book with only mandatory fields (no dates) is valid"
+    ],
+    "passes": true
+  },
+  {
+    "category": "TDD - Setup & Data Structure - Unit Test",
+    "description": "Validate Library Array Initialization",
+    "steps": [
+      "Check that library array is declared with size MAX_BOOKS (10)",
+      "Verify all 10 pointers are initialized to nullptr using C23 keyword",
+      "Test that constexpr MAX_BOOKS is defined as 10",
+      "Attempt to access library[0] through library[9] to confirm nullptr initialization",
+      "Test that library[MAX_BOOKS] (index 10) would be out of bounds (if checked)",
+      "Assert that library array has exactly 10 elements",
+      "Assert that each element is initialized to nullptr",
+      "Assert that MAX_BOOKS constant is 10 and cannot be modified"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "Create a CLI menu system",
+    "steps": [
+      "Create a main loop that repeatedly displays a menu of options",
+      "Include in the CLI: 1. Show library, 2. Add book, 3. Delete book, 4. Recommend book, 5. Save library, 6. Load library, 0. Exit"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "1. Show library option in CLI",
+    "steps": [
+      "When 1 is pressed in the CLI, call the 'list_books' function",
+      "Ensure the output is formatted in a table with fixed-width columns"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - list_books",
+    "description": "Display the book collection",
+    "steps": [
+      "Implement a function 'list_books' that iterates through the array",
+      "Check for 'nullptr' to skip empty slots",
+      "Returns the array compacted without gaps"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "2. Add book option in CLI",
+    "steps": [
+      "When 2 is pressed in the CLI, prompt user for book details",
+      "Call the 'add_book' function with user-provided data"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - add_book",
+    "description": "Add a new book to the collection",
+    "steps": [
+      "Implement a function 'add_book' that takes book details as parameters",
+      "Check for 'nullptr' to find an empty slot",
+      "Fill the first available slot with the new book"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "3. Delete book option in CLI",
+    "steps": [
+      "When 3 is pressed in the CLI, prompt user for a 5-digit ISBN",
+      "Call the 'delete_book' function with the ISBN"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - delete_book",
+    "description": "Delete a book from the collection",
+    "steps": [
+      "Implement a function 'delete_book' that takes an ISBN as parameter",
+      "Search through the array for a matching ISBN",
+      "Set the pointer at that index to nullptr and free the allocated memory",
+      "Return true if deletion was successful, false if ISBN not found"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "4. Recommend book option in CLI",
+    "steps": [
+      "When 4 is pressed in the CLI, Call the 'recommend_book' function",
+      "Display the generated recommendation to the user (hide start_date and end_date)"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Setup & Data Structure - Persistence",
+    "description": "Fake db for fake ai purposes",
+    "steps": [
+      "Create a db.json file",
+      "Create a author name property with an array of 10 author names",
+      "Create a author surname property with an array of 10 surnames",
+      "Create a title adjective property with an array of 10 adjectives",
+      "Create a title noun property with an array of 10 nouns"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - recommend_book",
+    "description": "Generate a random book recommendation",
+    "steps": [
+      "Implement a function 'recommend_book' that reads from the db.json file",
+      "Select a random author name, surname, adjective, and noun",
+      "Generate a ratendom 5-digit ISBN and a random rating between 1 and 5",
+      "Return a 'Book' struct with the generated data (but do not add it to the library and keep start_date and end_date empty)"      
+    ],
+    "passes": true
+  }, 
+  {
+    "category": "TDD - Core Functional - recommend_book - Unit Test",
+    "description": "Validate recommend_book function",
+    "steps": [
+      "Act generating a Book with recommend_book function",
+      "Assert that the function returns a valid Book pointer (not nullptr)",
+      "Assert that the Book has a valid ISBN",
+      "Assert that the Book has a valid rating",
+      "Assert that the Book has a valid title",
+      "Assert that the Book has a valid author",
+      "Assert that the Book has empty start_date and end_date",
+      "Assert that the Book is not added to the library"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "5. Save library option in CLI",
+    "steps": [
+      "When 5 is pressed in the CLI, Call the 'save_library' function",
+      "Print that the library was saved successfully/something went wrong"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - save_library",
+    "description": "Save the current library state to a file",
+    "steps": [
+      "Formatthe current library array into a JSON structure",
+      "Save the formatted JSON to a file named 'library-saved.json'",
+      "Override the file if it already exists"     
+    ],
+    "passes": true
+  }, 
+  {
+    "category": "CLI",
+    "description": "6. Load library option in CLI",
+    "steps": [
+      "When 6 is pressed in the CLI, Call the 'load_library' function",
+      "Print that the library was loaded successfully/something went wrong/no library found"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Core Functional - load_library",
+    "description": "Load a previously saved library state from a file",
+    "steps": [
+      "Read the 'library-saved.json' file",
+      "Parse the JSON into a library array",
+      "Replace the current library with the loaded one",
+      "Return 0 if successful, -1 if file not found, -2 if parse error"
+    ],
+    "passes": true
+  },
+  {
+    "category": "CLI",
+    "description": "0. Exit option in CLI",
+    "steps": [
+      "When 0 is pressed in the CLI, exit the program gracefully"
+    ],
+    "passes": true
+  },
+  {
+    "category": "Integration Test - Full CRUD Flow",
+    "description": "End-to-end CLI integration test simulating user input for complete CRUD operations with save/load",
+    "steps": [
+      "Arrange test data: Book 1 - ISBN: 12345, Title: 'The LOTR', Author: 'J.R.R. Tolkien', Rating: 5",
+      "Arrange test data: Book 2 - ISBN: 67890, Title: 'H.P.', Author: 'J.K. Rowling', Dates: start: '2024-01-01', end: '2024-02-01', Rating: 4",
+      "Setup simulated stdin input sequence matching CLI prompts in order:",
+      "  First '2' (Add Book option)",
+      "  Then '12345' (ISBN), 'The LOTR' (Title), 'J.R.R. Tolkien' (Author), '' (empty for start_date), '' (empty for end_date), '5' (Rating)",
+      "  Then '2' (Add Book option again)",
+      "  Then '67890' (ISBN), 'H.P.' (Title), 'J.K. Rowling' (Author), '2024-01-01' (start_date), '2024-02-01' (end_date), '4' (Rating)",
+      "  Then '1' (List Books option)",
+      "  Then '5' (Save Library option)",
+      "  Then '3' (Delete Book option)",
+      "  Then '12345' (ISBN to delete)",
+      "  Then '1' (List Books option again)",
+      "  Then '6' (Load Library option)",
+      "  Then '1' (List Books final time)",
+      "  Then '0' (Exit option)",
+      "Run CLI program with simulated stdin input, capturing stdout output",
+      "Act by executing the CLI with the simulated input sequence",
+      "Assert that after first 'list books' (1), output shows exactly 2 books with correct ISBNs (12345 and 67890)",
+      "Assert that Book 1 in list shows: Title='The LOTR', Author='J.R.R. Tolkien', Rating=5, Dates empty",
+      "Assert that Book 2 in list shows: Title='H.P.', Author='J.K. Rowling', Rating=4, Dates='2024-01-01' to '2024-02-01'",
+      "Assert that 'save library' operation (5) prints 'saved successfully' or similar success message",
+      "Assert that after delete (ISBN 12345) and subsequent list (1), output shows exactly 1 book (only ISBN 67890)",
+      "Assert that remaining book has correct properties: Title='H.P.', Author='J.K. Rowling', etc.",
+      "Assert that 'load library' operation (6) prints 'loaded successfully' or similar success message",
+      "Assert that final list (1) after load shows 2 books again (library restored to original state)",
+      "Assert that both books in final list have correct properties matching original Book 1 and Book 2",
+      "Assert that exit (0) terminates program without errors",
+      "Verify 'library-saved.json' file exists after test and contains exactly 2 book entries"
+    ],
+    "passes": true
+  }
+   
+]
