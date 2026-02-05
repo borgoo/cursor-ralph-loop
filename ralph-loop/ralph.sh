@@ -13,7 +13,7 @@ COMPLETION_MARKER="COMPLETION_MARKER_$(date +%s%N | sha256sum | head -c 32)"
 # Help function
 show_help() {
     cat << EOF
-Usage: ralph.sh <requirements-file> <backlog-file> [iterations-limit] [agent-model]
+Usage: ralph.sh <requirements-file> <backlog-file> [iterations-limit] [agent-model] [workspace-path]
 
 Ralph loop implemented with Cursor CLI.
 
@@ -22,15 +22,49 @@ Arguments:
     backlog-file       Path to backlog JSON file (required, must end with .json)
     iterations-limit   Maximum number of iterations to run (optional, default: 1)
     agent-model        AI model to use (optional, default: subscription default)
+    workspace-path     Path to project/workspace root (optional, default: ..).
+                       Use this so the Cursor CLI knows the root of the project.
 
 Examples:
     ralph.sh requirements.md PRD.json
     ralph.sh requirements.md PRD.json 5
     ralph.sh requirements.md backlog/PRD-02.json 20 opus-4.5-thinking
+    ralph.sh requirements.md PRD.json 3 opus-4.5 /home/user/projects/my-project
     ralph.sh --help
 
 EOF
     exit 0
+}
+
+# Print configuration recap and wait for user confirmation
+print_config_recap() {
+    echo -e "${GREEN}===========================================${NC}"
+    echo -e "${GREEN}Ralph Loop${NC}"
+    echo -e "${GREEN}===========================================${NC}"
+    echo -e "${YELLOW}Configuration:${NC}"
+    echo "  Requirements file: $REQUIREMENTS_FILE"
+    echo "  Backlog file:      $BACKLOG_FILE"
+    echo "  Iterations limit:  $ITERATIONS_LIMIT"
+    echo "  Agent model:       $MODEL_DISPLAY"
+    echo "  Workspace (root):  $WORKSPACE_ABS"
+    echo "  Completion marker: $COMPLETION_MARKER"
+    echo -e "${GREEN}===========================================${NC}"
+}
+
+# Print configuration recap as result of the loop
+# Usage: print_exit_config_recap [status-message] [iteration-reached] [end-time]
+print_exit_config_recap() {
+    local status_msg="$1"
+    local iteration_reached="$2"
+    local end_time="$3"
+    print_config_recap
+    echo "  RESULT:"
+    echo "==========================================="
+    echo -e "  Status:            $status_msg"
+    echo "  Iteration reached: $iteration_reached"
+    echo "  Start time:        $LOOP_START_TIME"
+    echo "  End time:          $end_time"
+    echo ""
 }
 
 # Check for help flag
@@ -56,6 +90,16 @@ REQUIREMENTS_FILE=$1
 BACKLOG_FILE=$2
 ITERATIONS_LIMIT=${3:-1}
 AGENT_MODEL=${4:-""}
+WORKSPACE_PATH=${5:-".."}
+
+# Validate workspace path exists
+if [ ! -d "$WORKSPACE_PATH" ]; then
+    echo -e "${RED}Error: workspace-path '$WORKSPACE_PATH' does not exist or is not a directory${NC}"
+    exit 1
+fi
+
+# Resolve workspace path to absolute so the agent has a clear project root
+WORKSPACE_ABS=$(cd "$WORKSPACE_PATH" && pwd)
 
 # Validate requirements file has .md extension
 if [[ ! "$REQUIREMENTS_FILE" =~ \.md$ ]]; then
@@ -96,16 +140,7 @@ if [ -n "$AGENT_MODEL" ]; then
 fi
 
 # Display recap
-echo -e "${GREEN}===========================================${NC}"
-echo -e "${GREEN}Ralph Loop${NC}"
-echo -e "${GREEN}===========================================${NC}"
-echo -e "${YELLOW}Configuration:${NC}"
-echo "  Requirements file: $REQUIREMENTS_FILE"
-echo "  Backlog file:      $BACKLOG_FILE"
-echo "  Iterations limit:  $ITERATIONS_LIMIT"
-echo "  Agent model:       $MODEL_DISPLAY"
-echo "  Completion marker: $COMPLETION_MARKER"
-echo -e "${GREEN}===========================================${NC}"
+print_config_recap
 echo ""
 read -p "Press Enter to start or Ctrl+C to cancel..."
 echo ""
@@ -121,7 +156,7 @@ for ((i=1; i<=$ITERATIONS_LIMIT; i++)); do
     echo "_______________________"
 
     result=$(
-      agent -p --force $MODEL_PARAM <<EOF
+      agent --force $MODEL_PARAM --workspace "$WORKSPACE_ABS" -p <<EOF
 @$REQUIREMENTS_FILE @$BACKLOG_FILE @progress.txt
 
 GLOBAL RULES (NON-NEGOTIABLE)
@@ -217,11 +252,11 @@ EOF
     
     if [[ "$result" == *"$COMPLETION_MARKER"* ]]; then
         END_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-        echo -e "${GREEN}✅ [$COMPLETION_MARKER] START: $LOOP_START_TIME | END: $END_TIME | ITERATIONS: $i | REQUIREMENTS: $REQUIREMENTS_FILE | FILE: $BACKLOG_FILE${NC}"
+        print_exit_config_recap "${GREEN}✅ Completed${NC}" $i $END_TIME
         exit 0
     fi
 done
 
 END_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-echo -e "${YELLOW}⚠️ [Reached maximum iterations] START: $LOOP_START_TIME | END: $END_TIME | ITERATIONS: $((i-1)) | REQUIREMENTS: $REQUIREMENTS_FILE | FILE: $BACKLOG_FILE${NC}"
+print_exit_config_recap "${YELLOW}⚠️ Max iterations reached${NC}" $((i-1)) $END_TIME
 exit 0

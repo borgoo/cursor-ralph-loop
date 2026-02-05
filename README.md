@@ -20,12 +20,13 @@ A deeper look into it: [Use case and walkthrough](https://borgoo.github.io/blog/
 | **ralph.sh** | Core script <br>Run `./ralph.sh` <br>see usage with `./ralph.sh --help` |
 
 ```
-Usage: ralph.sh <requirements-file> <backlog-file> [iterations-limit] [agent-model]
+Usage: ralph.sh <requirements-file> <backlog-file> [iterations-limit] [agent-model] [workspace-path]
 Arguments:
   requirements-file  Path to requirements markdown (required, .md)
   backlog-file       Path to backlog JSON (required, .json)
   iterations-limit   Max iterations (optional, default: 1)
   agent-model        AI model (optional, default: subscription default)
+  workspace-path     Project/workspace root (optional, default: ..). Helps Cursor CLI know the project root.
 Example: ./ralph.sh requirements.md backlogs/PRD.json 5
 ```
 
