@@ -10,5 +10,3 @@ CRUD operations on a book library
 4. TDD with AAA approach
 5. No external libraries
 6. Files organized by features in directories (eg. src, include, tests ...)
-7. Project structure must be created one directory level above the directory ralph-loop, and must be considered that the project root
-8. The compiled binary must be placed in the project root directory
