@@ -183,26 +183,6 @@ PROCESS
    - Do NOT implement more than one JSON element.
    - Do NOT add tests other than the ones that are already in the backlog JSON.
 
-THINKING TRACE (MANDATORY)
-- As soon as you decide which feature to implement, you MUST create a file named "thinking.tmp".
-- The file MUST be created immediately after feature selection and before any code changes.
-
-The initial contents of "thinking.tmp" MUST include:
-- Date and time of initialization
-- Identifier / name of the chosen feature
-
-During the iteration:
-- Append ONLY extremely minimal notes for important decisions/struggles.
-- Each entry should be a single short line.
-- Do NOT include verbose reasoning or explanations.
-- The purpose is that running "cat thinking.tmp" clearly shows what you are currently working on.
-
-Completion rules:
-- Once the feature is fully implemented, tests are green, progress.txt is updated, and the git commit is created:
-    - You MUST delete "thinking.tmp".
-- The file must NOT exist at the end of a successful iteration.
-- Leaving "thinking.tmp" behind is considered an incomplete run.
-
 3. Implementation:
    - Implement ONLY the selected feature.
    - Do not refactor unrelated code.
@@ -223,10 +203,11 @@ Completion rules:
 
 6. Progress logging:
    - APPEND a new entry to progress.txt including:
-       - Date and time
+       - Date and time (format: YYYY-MM-DD HH:MM:SS)
        - Feature name / identifier
        - Brief description of what was done
        - Confirmation that tests are green
+       - num of remaining features with "passes": false
 
 7. Version control:
    - Create a git commit for this feature only.
@@ -252,11 +233,11 @@ EOF
     
     if [[ "$result" == *"$COMPLETION_MARKER"* ]]; then
         END_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-        print_exit_config_recap "${GREEN}✅ Completed${NC}" $i $END_TIME
+        print_exit_config_recap "${GREEN}✅ Completed${NC}" $i "$END_TIME"
         exit 0
     fi
 done
 
 END_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-print_exit_config_recap "${YELLOW}⚠️ Max iterations reached${NC}" $((i-1)) $END_TIME
+print_exit_config_recap "${YELLOW}⚠️ Max iterations reached${NC}" $((i-1)) "$END_TIME"
 exit 0
