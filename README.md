@@ -70,9 +70,15 @@ git clone --depth 1 https://github.com/borgoo/cursor-ralph-loop.git && rmdir /s 
 ## Generated files (during run)
 
 - **progress.txt** — History of what each iteration did; useful to review progress.
-- **thinking.tmp** — Live view of the agent’s current work; e.g. `tail -f thinking.tmp` while iterations run.
 
 ## Troubleshooting
 
 - **Run the agent before `./ralph.sh`** — Ensure the Cursor agent is started and logged in so the CLI can reach the models.
-- **Models** — See the [Cursor CLI documentation](https://cursor.com/docs/cli/overview#getting-started) for available models and how to pass them (e.g. `agent-model` argument).
+- **Models** — See the [Cursor CLI documentation](https://cursor.com/docs/cli/overview#getting-started) for available models (`agent models` in terminal) and how to pass them (e.g. `agent-model` argument).
+- **Incorrect line endings** — If an error like this appears in the terminal when running `./ralph.sh`
+  ```
+  /usr/bin/env: 'bash\r': No such file or directory
+  /usr/bin/env: use -[v]S to pass options in shebang lines
+  ```
+
+  Change CLRF to LF line endings in `ralph.sh` file.
